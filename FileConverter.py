@@ -51,5 +51,3 @@ def join():
     print('Joining', absfrom, 'to', absto, 'by', readsize)
     #Join now
     fjoiner.join_file(from_dir, readsize, to_file)
-
-split()
