@@ -1,12 +1,15 @@
 import bot
-import os
+import FileConverter
 
-cwd = os.getcwd()
+def upload():
+    dir = "D:\Movies\Leo (2023) Tamil HQ HDRip - 1080p.mkv"
+    FileConverter.split(dir)
+    bot.send(dir)
 
-name = os.listdir(cwd+"\\out")
+def download():
+    file = "Leo (2023) Tamil HQ HDRip - 1080p.mkv"
+    bot.down(file)
+    FileConverter.join(file)
 
-for i in range(len(name)):
-    name[i] = cwd+"\\out\\"+name[i]
-
-if __name__ == '__main__':
-    bot.send(name)
+#upload()
+download()
