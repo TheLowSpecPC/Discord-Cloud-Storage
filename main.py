@@ -1,12 +1,14 @@
 import FileConverter
 from tkinter import *
+from tkinter import ttk
 from tkinter import filedialog
 import sys
 import threading
 import nextcord, os, shutil
 from nextcord.ext import commands
+from subprocess import call
 
-token = 'Your TOKEN'
+token = 'MTA2MjAwNDI2MjgxMDQzMTYxMA.Gm8Hhe.vx-gGLrVcrrHF5-rC0D_gm5k8Usl3yUXsblTq0'
 intents = nextcord.Intents.all()
 
 bot = commands.Bot(command_prefix='!',intents=intents)
@@ -21,122 +23,61 @@ root.config(bg="gray")
 def upload():
     dir = filedialog.askopenfilename(initialdir="C:/", title="Select a Video")
 
+    pb = ttk.Progressbar(
+        root,
+        orient='horizontal',
+        mode='indeterminate',
+        length=280
+    )
+    pb.place(x=120, y=180)
+    pb.start()
+    value_label = ttk.Label(root, text=f"Wait till the process is done")
+    value_label.place(x=185, y=210)
+
     FileConverter.split(dir)
-    @bot.event
-    async def on_ready():
-        flag = dir.split("\\")[len(dir.split("\\")) - 1]
-        file = os.listdir(cwd + "\\out")
-        name = file[0].split(".", 1)[0]
-        for i in range(len(file)):
-            file[i] = cwd + "\\out\\" + file[i]
+    call(["python", f"dbot.py", "send", dir])
 
-        print(f'{bot.user} has connected to Discord!')
-        channel = bot.get_channel(1116747276275155024)
-        for i in range(len(file)):
-            await channel.send(file=nextcord.File(file[i]), content=name + str(i + 1))
-            if os.path.exists(file[i]):
-                os.remove(file[i])
-
-        channel_flag = bot.get_channel(1180390532703326210)
-        await channel_flag.send(content=str(len(file)) + ' ' + flag)
-        async for message in channel_flag.history():
-            con = message.content
-            flag = con.split(" ", 1)
-            cmd.delete('1.0', END)
-            cmd.insert(END, flag[1] + "\n")
-
-        await bot.close()
-
-    bot.run(token)
+    value_label['text'] = "File successfully uploaded"
+    pb.stop()
 
 def download():
     file = don.get()
 
-    @bot.event
-    async def on_ready():
-        print(f'{bot.user} has connected to Discord!')
-        channel = bot.get_channel(1116747276275155024)
-        channel_flag = bot.get_channel(1180390532703326210)
-        folder = os.listdir(cwd + "\\out")
-        name = file.split(".")[0]
-        contents = []
-        names = []
-        for i in range(len(folder)):
-            folder[i] = cwd + "\\out\\" + folder[i]
-        for i in range(len(folder)):
-            if os.path.exists(folder[i]):
-                os.remove(folder[i])
+    pb = ttk.Progressbar(
+        root,
+        orient='horizontal',
+        mode='indeterminate',
+        length=280
+    )
+    pb.place(x=120, y=180)
+    pb.start()
+    value_label = ttk.Label(root, text=f"Wait till the process is done")
+    value_label.place(x=185, y=210)
 
-        async for message in channel_flag.history():
-            con = message.content
-            flag = con.split(" ", 1)
-            if flag[1] == file:
-                totalpart = int(flag[0])
-                for i in range(totalpart):
-                    names.append(name + str(i + 1))
-                print(names)
-
-        async for message in channel.history():
-            content = message.content
-            contents.append(content)
-
-            if content in names:
-                for attachment in message.attachments:
-                    print(attachment.filename)
-                    await attachment.save(attachment.filename)
-                    shutil.move(cwd + "\\" + attachment.filename,
-                                cwd + "\\out\\" + attachment.filename)
-
-        await bot.close()
-
-    bot.run(token)
-
+    call(["python", f"dbot.py", "download", file])
     FileConverter.join(file)
+
+    value_label['text'] = "File successfully downloaded"
+    pb.stop()
 
 def delete():
     file = de.get()
 
-    @bot.event
-    async def on_ready():
-        print(f'{bot.user} has connected to Discord!')
-        channel = bot.get_channel(1116747276275155024)
-        channel_flag = bot.get_channel(1180390532703326210)
-        folder = os.listdir(cwd + "\\out")
-        name = file.split(".")[0]
-        contents = []
-        names = []
-        for i in range(len(folder)):
-            folder[i] = cwd + "\\out\\" + folder[i]
-        for i in range(len(folder)):
-            if os.path.exists(folder[i]):
-                os.remove(folder[i])
+    pb = ttk.Progressbar(
+        root,
+        orient='horizontal',
+        mode='indeterminate',
+        length=280
+    )
+    pb.place(x=120, y=180)
+    pb.start()
+    value_label = ttk.Label(root, text=f"Wait till the process is done")
+    value_label.place(x=185, y=210)
 
-        async for message in channel_flag.history():
-            con = message.content
-            flag = con.split(" ", 1)
-            if flag[1] == file:
-                totalpart = int(flag[0])
-                for i in range(totalpart):
-                    names.append(name + str(i + 1))
-                print(names)
-                await message.delete()
+    call(["python", f"dbot.py", "delete", file])
 
-        async for message in channel_flag.history():
-            con = message.content
-            flag = con.split(" ", 1)
-            cmd.delete('1.0', END)
-            cmd.insert(END, flag[1] + "\n")
-
-        async for message in channel.history():
-            content = message.content
-            contents.append(content)
-
-            if content in names:
-                await message.delete()
-
-        await bot.close()
-
-    bot.run(token)
+    value_label['text'] = "File successfully deleted"
+    pb.stop()
 
 def exit():
     sys.exit(1)
@@ -160,7 +101,7 @@ de.place(x=170, y=150)
 de.bind("<FocusIn>", temp_text4)
 
 Button(root,text="Download", command=threading.Thread(target=download).start, width="10", height="1").place(x=300, y=120)
-Button(root,text="Delete", command=delete, width="10", height="1").place(x=300, y=150)
+Button(root,text="Delete", command=threading.Thread(target=delete).start, width="10", height="1").place(x=300, y=150)
 
 Button(root, text="Upload", command=threading.Thread(target=upload).start, width="20", height="2").place(x=185, y=250)
 

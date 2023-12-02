@@ -9,7 +9,8 @@ down = str(Path.home() / "Downloads")
 
 def split(dir):
     folder = os.listdir(cwd + "\\out")
-    file = dir.split("\\")[len(dir.split("\\"))-1]
+    file_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
+    file = file_tmp.split("/")[len(file_tmp.split("/")) - 1]
 
     for i in range(len(folder)):
         folder[i] = cwd + "\\out\\" + folder[i]
@@ -48,7 +49,8 @@ def split(dir):
 
 def join(dir):
     fjoiner = file_processing.FileProcessor()
-    file = dir.split("\\")[len(dir.split("\\")) - 1]
+    file_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
+    file = file_tmp.split("/")[len(file_tmp.split("/")) - 1]
     folder = os.listdir(cwd + "\\out")
 
     #Set the size-value for reading chunks, for example: 25 mb

@@ -1,7 +1,8 @@
 import nextcord, os, shutil
 from nextcord.ext import commands
+import sys
 
-token = 'Your TOKEN'
+token = 'MTA2MjAwNDI2MjgxMDQzMTYxMA.Gm8Hhe.vx-gGLrVcrrHF5-rC0D_gm5k8Usl3yUXsblTq0'
 intents = nextcord.Intents.all()
 
 bot = commands.Bot(command_prefix='!',intents=intents)
@@ -11,7 +12,8 @@ cwd = os.getcwd()
 def send(dir):
     @bot.event
     async def on_ready():
-        flag = dir.split("\\")[len(dir.split("\\"))-1]
+        flag_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
+        flag = flag_tmp.split("/")[len(flag_tmp.split("/")) - 1]
         file = os.listdir(cwd + "\\out")
         name = file[0].split(".",1)[0]
         for i in range(len(file)):
@@ -21,6 +23,7 @@ def send(dir):
         channel = bot.get_channel(1116747276275155024)
         for i in range(len(file)):
             await channel.send(file=nextcord.File(file[i]), content= name+str(i+1))
+            print(file[i])
             if os.path.exists(file[i]):
                 os.remove(file[i])
 
@@ -107,3 +110,10 @@ def dele(file):
         await bot.close()
 
     bot.run(token)
+
+if sys.argv[1] == "send":
+    send(sys.argv[2])
+elif sys.argv[1] == "download":
+    down(sys.argv[2])
+elif sys.argv[1] == "delete":
+    dele(sys.argv[2])
