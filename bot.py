@@ -70,3 +70,40 @@ def down(file):
         await bot.close()
 
     bot.run(token)
+
+def dele(file):
+    @bot.event
+    async def on_ready():
+        print(f'{bot.user} has connected to Discord!')
+        channel = bot.get_channel(1116747276275155024)
+        channel_flag = bot.get_channel(1180390532703326210)
+        folder = os.listdir(cwd + "\\out")
+        name = file.split(".")[0]
+        contents = []
+        names = []
+        for i in range(len(folder)):
+            folder[i] = cwd + "\\out\\" + folder[i]
+        for i in range(len(folder)):
+            if os.path.exists(folder[i]):
+                os.remove(folder[i])
+
+        async for message in channel_flag.history():
+            con = message.content
+            flag = con.split(" ", 1)
+            if flag[1] == file:
+                totalpart = int(flag[0])
+                for i in range(totalpart):
+                    names.append(name + str(i + 1))
+                print(names)
+                await message.delete()
+
+        async for message in channel.history():
+            content = message.content
+            contents.append(content)
+
+            if content in names:
+                await message.delete()
+
+        await bot.close()
+
+    bot.run(token)
