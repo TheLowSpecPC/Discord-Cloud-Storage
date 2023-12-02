@@ -8,7 +8,7 @@ import nextcord, os, shutil
 from nextcord.ext import commands
 from subprocess import call
 
-token = 'MTA2MjAwNDI2MjgxMDQzMTYxMA.Gm8Hhe.vx-gGLrVcrrHF5-rC0D_gm5k8Usl3yUXsblTq0'
+token = 'Your TOKEN'
 intents = nextcord.Intents.all()
 
 bot = commands.Bot(command_prefix='!',intents=intents)
