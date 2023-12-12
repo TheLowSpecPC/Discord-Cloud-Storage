@@ -2,7 +2,7 @@ import nextcord, os, shutil
 from nextcord.ext import commands
 import sys
 
-token = 'Your TOKEN'
+token = 'Your Token'
 intents = nextcord.Intents.all()
 
 bot = commands.Bot(command_prefix='!',intents=intents)
@@ -15,20 +15,20 @@ def send(dir):
         flag_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
         flag = flag_tmp.split("/")[len(flag_tmp.split("/")) - 1]
         file = os.listdir(cwd + "\\out")
-        name = file[0].split(".",1)[0]
         for i in range(len(file)):
             file[i] = cwd + "\\out\\" + file[i]
 
         print(f'{bot.user} has connected to Discord!')
+
+        channel_flag = bot.get_channel(1180390532703326210)
+        await channel_flag.send(content=str(len(file)) + ' ' + flag)
+
         channel = bot.get_channel(1116747276275155024)
         for i in range(len(file)):
-            await channel.send(file=nextcord.File(file[i]), content= name+str(i+1))
+            await channel.send(file=nextcord.File(file[i]), content= flag+str(i+1))
             print(file[i])
             if os.path.exists(file[i]):
                 os.remove(file[i])
-
-        channel_flag = bot.get_channel(1180390532703326210)
-        await channel_flag.send(content=str(len(file))+' '+flag)
 
         await bot.close()
 
@@ -41,7 +41,6 @@ def down(file):
         channel = bot.get_channel(1116747276275155024)
         channel_flag = bot.get_channel(1180390532703326210)
         folder = os.listdir(cwd + "\\out")
-        name = file.split(".")[0]
         contents = []
         names = []
         for i in range(len(folder)):
@@ -56,7 +55,7 @@ def down(file):
             if flag[1] == file:
                 totalpart = int(flag[0])
                 for i in range(totalpart):
-                    names.append(name + str(i + 1))
+                    names.append(file + str(i + 1))
                 print(names)
 
         async for message in channel.history():
@@ -81,7 +80,6 @@ def dele(file):
         channel = bot.get_channel(1116747276275155024)
         channel_flag = bot.get_channel(1180390532703326210)
         folder = os.listdir(cwd + "\\out")
-        name = file.split(".")[0]
         contents = []
         names = []
         for i in range(len(folder)):
@@ -96,15 +94,20 @@ def dele(file):
             if flag[1] == file:
                 totalpart = int(flag[0])
                 for i in range(totalpart):
-                    names.append(name + str(i + 1))
+                    names.append(file + str(i + 1))
                 print(names)
-                await message.delete()
 
         async for message in channel.history():
             content = message.content
             contents.append(content)
 
             if content in names:
+                await message.delete()
+
+        async for message in channel_flag.history():
+            con = message.content
+            flag = con.split(" ", 1)
+            if flag[1] == file:
                 await message.delete()
 
         await bot.close()
