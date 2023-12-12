@@ -118,7 +118,7 @@ cmd.config(yscrollcommand=scrollbar.set)
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     channel_flag = bot.get_channel(1180390532703326210)
-    async for message in channel_flag.history():
+    async for message in channel_flag.history(limit=None):
         con = message.content
         flag = con.split(" ", 1)
         cmd.insert(END, flag[1]+"\n")

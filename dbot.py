@@ -49,7 +49,7 @@ def down(file):
             if os.path.exists(folder[i]):
                 os.remove(folder[i])
 
-        async for message in channel_flag.history():
+        async for message in channel_flag.history(limit=None):
             con = message.content
             flag = con.split(" ", 1)
             if flag[1] == file:
@@ -57,17 +57,23 @@ def down(file):
                 for i in range(totalpart):
                     names.append(file + str(i + 1))
                 print(names)
+                break
 
-        async for message in channel.history():
+        a=0
+        async for message in channel.history(limit=None):
             content = message.content
             contents.append(content)
 
-            if content in names:
-                for attachment in message.attachments:
-                    print(attachment.filename)
-                    await attachment.save(attachment.filename)
-                    shutil.move(cwd+"\\"+attachment.filename,
-                                    cwd +"\\out\\"+attachment.filename)
+            if a <= len(names):
+                if content in names:
+                    for attachment in message.attachments:
+                        print(attachment.filename)
+                        await attachment.save(attachment.filename)
+                        shutil.move(cwd+"\\"+attachment.filename,
+                                        cwd +"\\out\\"+attachment.filename)
+                        a+=1
+            else:
+                break
 
         await bot.close()
 
@@ -88,7 +94,7 @@ def dele(file):
             if os.path.exists(folder[i]):
                 os.remove(folder[i])
 
-        async for message in channel_flag.history():
+        async for message in channel_flag.history(limit=None):
             con = message.content
             flag = con.split(" ", 1)
             if flag[1] == file:
@@ -96,19 +102,26 @@ def dele(file):
                 for i in range(totalpart):
                     names.append(file + str(i + 1))
                 print(names)
+                break
 
-        async for message in channel.history():
+        a=0
+        async for message in channel.history(limit=None):
             content = message.content
             contents.append(content)
 
-            if content in names:
-                await message.delete()
+            if a <= len(names):
+                if content in names:
+                    await message.delete()
+                    a+=1
+            else:
+                break
 
-        async for message in channel_flag.history():
+        async for message in channel_flag.history(limit=None):
             con = message.content
             flag = con.split(" ", 1)
             if flag[1] == file:
                 await message.delete()
+                break
 
         await bot.close()
 
