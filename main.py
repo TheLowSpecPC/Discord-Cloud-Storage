@@ -7,8 +7,9 @@ import threading
 import nextcord, os, shutil
 from nextcord.ext import commands
 from subprocess import call
+from secrets import Your_Token
 
-token = 'Your Token'
+token = Your_Token
 intents = nextcord.Intents.all()
 
 bot = commands.Bot(command_prefix='!',intents=intents)
