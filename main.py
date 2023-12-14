@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkinter import filedialog
 import sys
 import threading
-import nextcord, os, shutil
+import nextcord, os
 from nextcord.ext import commands
 from subprocess import call
 from secrets import Your_Token

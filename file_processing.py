@@ -3,7 +3,6 @@
 # https://github.com/SergioLaRosa/splitnjoin
 
 import os
-import sys
 import logging
 import hashlib
 import math
