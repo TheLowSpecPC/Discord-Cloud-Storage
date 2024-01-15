@@ -2,3 +2,4 @@ pip install nextcord
 pip install pathlib
 pip install logging
 pip install hashlib
+pip install nextcord
