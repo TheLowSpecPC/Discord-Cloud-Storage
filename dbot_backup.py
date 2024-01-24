@@ -10,7 +10,7 @@ bot = commands.Bot(command_prefix='!',intents=intents)
 cwd = os.getcwd()
 
 
-def send(dir, folder):
+def send(dir):
     @bot.event
     async def on_ready():
         flag_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
@@ -26,13 +26,13 @@ def send(dir, folder):
 
         async for message in channel_flag.history(limit=None):
             con = message.content
-            check = con.split(" ", 2)
-            if re.sub("\(.*?\)", "()", check[2]) == re.sub("\(.*?\)", "()", "()"+flag):
+            check = con.split(" ", 1)
+            if re.sub("\(.*?\)", "()", check[1]) == re.sub("\(.*?\)", "()", "()"+flag):
                 substrings = []
                 in_brackets = False
                 current_substring = ""
 
-                for c in check[2]:
+                for c in check[1]:
                     if c == "(":
                         in_brackets = True
                     elif c == ")" and in_brackets:
@@ -48,13 +48,10 @@ def send(dir, folder):
                 flag = f'({int(substrings[0])+1})'+flag
                 break
 
-            elif check[2] == flag:
+            elif check[1] == flag:
                 flag = '(1)' + flag
 
-        if folder == "null":
-            await channel_flag.send(content=str(len(file)) + ' null ' + flag)
-        else:
-            await channel_flag.send(content=str(len(file)) + ' ' + folder + ' ' + flag)
+        await channel_flag.send(content=str(len(file)) + ' ' + flag)
 
         for i in range(len(file)):
             await channel.send(file=nextcord.File(file[i]), content= flag+str(i+1))
@@ -83,8 +80,8 @@ def down(file):
 
         async for message in channel_flag.history(limit=None):
             con = message.content
-            flag = con.split(" ", 2)
-            if flag[2] == file:
+            flag = con.split(" ", 1)
+            if flag[1] == file:
                 totalpart = int(flag[0])
                 for i in range(totalpart):
                     names.append(file + str(i + 1))
@@ -128,8 +125,8 @@ def dele(file):
 
         async for message in channel_flag.history(limit=None):
             con = message.content
-            flag = con.split(" ", 2)
-            if flag[2] == file:
+            flag = con.split(" ", 1)
+            if flag[1] == file:
                 totalpart = int(flag[0])
                 for i in range(totalpart):
                     names.append(file + str(i + 1))
@@ -150,8 +147,8 @@ def dele(file):
 
         async for message in channel_flag.history(limit=None):
             con = message.content
-            flag = con.split(" ", 2)
-            if flag[2] == file:
+            flag = con.split(" ", 1)
+            if flag[1] == file:
                 await message.delete()
                 break
 
@@ -159,21 +156,9 @@ def dele(file):
 
     bot.run(token)
 
-def create_folder(folder):
-    @bot.event
-    async def on_ready():
-        print(f'{bot.user} has connected to Discord!')
-        folder_flag = bot.get_channel(1199825547077898392)
-        await folder_flag.send(content=folder)
-
-        await bot.close()
-    bot.run(token)
-
 if sys.argv[1] == "send":
-    send(sys.argv[2], sys.argv[3])
+    send(sys.argv[2])
 elif sys.argv[1] == "download":
     down(sys.argv[2])
 elif sys.argv[1] == "delete":
     dele(sys.argv[2])
-elif sys.argv[1] == "create_folder":
-    create_folder(sys.argv[2])

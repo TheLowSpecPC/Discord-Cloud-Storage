@@ -17,6 +17,7 @@ cwd = os.getcwd()
 
 root = Tk()
 root.geometry("520x600")
+root.resizable(False,False)
 root.title("Discord Cloud Storage (Made By: The Low Spec PC)")
 root.iconbitmap(cwd+"/icon.ico")
 root.config(bg="gray")
