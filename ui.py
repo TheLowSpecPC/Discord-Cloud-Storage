@@ -54,7 +54,7 @@ def menu(files):
     root1 = Tk()
     root1.geometry("450x200")
     root1.resizable(False, False)
-    root1.title("Discord Cloud Storage (Made By: The Low Spec PC)")
+    root1.title("Menu")
     root1.iconbitmap(cwd + "/icon.ico")
     root1.config(bg="gray")
 
@@ -102,7 +102,7 @@ def upload(key):
     root2 = Tk()
     root2.geometry("450x200")
     root2.resizable(False,False)
-    root2.title("Discord Cloud Storage (Made By: The Low Spec PC)")
+    root2.title("Upload")
     root2.iconbitmap(cwd + "/icon.ico")
     root2.config(bg="gray")
 
@@ -119,11 +119,15 @@ def upload(key):
     value_label = ttk.Label(root2, text=f"Wait till the process is done")
     value_label.place(x=160, y=120)
 
-    FileConverter.split(dir)
-    call(["python", f"dbot.py", "send", dir, key])
+    def thread():
+        FileConverter.split(dir)
+        call(["python", f"dbot.py", "send", dir, key])
 
-    value_label['text'] = "File successfully uploaded"
-    pb.stop()
+        value_label['text'] = "File successfully uploaded"
+        pb.stop()
+
+    th = threading.Thread(target=thread)
+    th.start()
 
     root2.mainloop()
 
@@ -131,18 +135,46 @@ def folder_options():
     root3 = Tk()
     root3.geometry("450x200")
     root3.resizable(False, False)
-    root3.title("Discord Cloud Storage (Made By: The Low Spec PC)")
+    root3.title("Folder Options")
     root3.iconbitmap(cwd + "/icon.ico")
     root3.config(bg="gray")
 
     Label(root3, text="Enter Folder Name", font=("Raleway", 15)).place(x=140, y=10)
-    Entry(root3, width="25").place(x=150, y=70)
+    fol = Entry(root3, width="25")
+    fol.place(x=150, y=50)
 
-    # Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
-    # Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
+    def cre():
+        pb = ttk.Progressbar(
+            root3,
+            orient='horizontal',
+            mode='indeterminate',
+            length=280
+        )
+        pb.place(x=85, y=80)
+        pb.start()
 
-    Button(root3, text="Create", width="15", height="2").grid(row=0, column=0, padx=70, pady=150)
-    Button(root3, text="Delete", width="15", height="2").grid(row=0, column=1, padx=10, pady=150)
+        call(["python", f"dbot.py", "folder", fol.get(), "cre"])
+
+        pb.stop()
+        Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
+
+    def dele():
+        pb = ttk.Progressbar(
+            root3,
+            orient='horizontal',
+            mode='indeterminate',
+            length=280
+        )
+        pb.place(x=85, y=80)
+        pb.start()
+
+        call(["python", f"dbot.py", "folder", fol.get(), "del"])
+
+        pb.stop()
+        Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
+
+    Button(root3, text="Create", command=threading.Thread(target=cre).start, width="15", height="2").grid(row=0 ,column=0, padx=70, pady=150)
+    Button(root3, text="Delete", command=threading.Thread(target=dele).start, width="15", height="2").grid(row=0 ,column=1, padx=10, pady=150)
 
     root3.mainloop()
 
@@ -150,11 +182,11 @@ def folder_menu(key):
     root4 = Tk()
     root4.geometry("550x600")
     root4.resizable(False, False)
-    root4.title("Discord Cloud Storage (Made By: The Low Spec PC)")
+    root4.title(key)
     root4.iconbitmap(cwd + "/icon.ico")
     root4.config(bg="gray")
 
-    Button(root4, text="Upload", command=threading.Thread(target=upload, args=key).start, width="15", height="2").grid(row=0, column=0, padx=10, pady=8)
+    Button(root4, text="Upload", command= partial(upload, key), width="15", height="2").grid(row=0, column=0, padx=10, pady=8)
 
     a = 1
     i = 0
@@ -179,7 +211,7 @@ def folder_menu(key):
 def exit():
     sys.exit(1)
 
-Button(root, text="Upload", command=threading.Thread(target=upload, args="null").start, width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
+Button(root, text="Upload", command= partial(upload, "null"), width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
 Button(root, text="Folder Options", command=folder_options, width="15", height="2").grid(row=0, column=1, padx=10, pady=8)
 
 root.wm_protocol("WM_DELETE_WINDOW", exit)

@@ -159,12 +159,68 @@ def dele(file):
 
     bot.run(token)
 
-def create_folder(folder):
+def credel_folder(folder, check):
+
     @bot.event
     async def on_ready():
         print(f'{bot.user} has connected to Discord!')
+        channel = bot.get_channel(1116747276275155024)
+        channel_flag = bot.get_channel(1180390532703326210)
         folder_flag = bot.get_channel(1199825547077898392)
-        await folder_flag.send(content=folder)
+        names = []
+        contents = []
+        files = []
+
+        if check == "cre":
+            async for message in folder_flag.history(limit=None):
+                content = message.content
+                names.append(content)
+
+            if folder not in names:
+                await folder_flag.send(content=folder)
+
+        elif check == "del":
+            names = []
+            async for message in channel_flag.history(limit=None):
+                con = message.content
+                flag = con.split(" ", 2)
+                if flag[1] == folder:
+                    files.append(flag[2])
+
+            for file in files:
+                async for message in channel_flag.history(limit=None):
+                    con = message.content
+                    flag = con.split(" ", 2)
+                    if flag[2] == file:
+                        totalpart = int(flag[0])
+                        for i in range(totalpart):
+                            names.append(file + str(i + 1))
+                        break
+                    print(names)
+
+                a = 0
+                async for message in channel.history(limit=None):
+                    content = message.content
+                    contents.append(content)
+
+                    if a <= len(names):
+                        if content in names:
+                            await message.delete()
+                            a += 1
+                    else:
+                        break
+
+                async for message in channel_flag.history(limit=None):
+                    con = message.content
+                    flag = con.split(" ", 2)
+                    if flag[2] == file:
+                        await message.delete()
+                        break
+
+            async for message in folder_flag.history(limit=None):
+                content = message.content
+                if content == folder:
+                    await message.delete()
 
         await bot.close()
     bot.run(token)
@@ -175,5 +231,5 @@ elif sys.argv[1] == "download":
     down(sys.argv[2])
 elif sys.argv[1] == "delete":
     dele(sys.argv[2])
-elif sys.argv[1] == "create_folder":
-    create_folder(sys.argv[2])
+elif sys.argv[1] == "folder":
+    credel_folder(sys.argv[2], sys.argv[3])
