@@ -1,4 +1,5 @@
 import FileConverter
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -44,11 +45,29 @@ print(file)
 print(folder)
 
 root = Tk()
-root.geometry("550x600")
+root.geometry("560x600")
 root.resizable(False,False)
 root.title("Discord Cloud Storage (Made By: The Low Spec PC)")
 root.iconbitmap(cwd+"/icon.ico")
 root.config(bg="gray")
+
+# main
+main_frame = Frame(root)
+main_frame.pack(fill=BOTH, expand=1)
+
+# canvas
+my_canvas = Canvas(main_frame)
+my_canvas.pack(side=LEFT, fill=BOTH, expand=1)
+
+# scrollbar
+my_scrollbar = tk.Scrollbar(main_frame, orient=VERTICAL, command=my_canvas.yview)
+my_scrollbar.pack(side=RIGHT, fill=Y)
+
+# configure the canvas
+my_canvas.configure(yscrollcommand=my_scrollbar.set, bg="gray")
+my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+second_frame = Frame(my_canvas, width = 1000, height = 100, bg="gray")
 
 def menu(files):
     root1 = Tk()
@@ -186,7 +205,25 @@ def folder_menu(key):
     root4.iconbitmap(cwd + "/icon.ico")
     root4.config(bg="gray")
 
-    Button(root4, text="Upload", command= partial(upload, key), width="15", height="2").grid(row=0, column=0, padx=10, pady=8)
+    # main
+    main_frame1 = Frame(root4)
+    main_frame1.pack(fill=BOTH, expand=1)
+
+    # canvas
+    my_canvas1 = Canvas(main_frame1)
+    my_canvas1.pack(side=LEFT, fill=BOTH, expand=1)
+
+    # scrollbar
+    my_scrollbar1 = tk.Scrollbar(main_frame1, orient=VERTICAL, command=my_canvas1.yview)
+    my_scrollbar1.pack(side=RIGHT, fill=Y)
+
+    # configure the canvas
+    my_canvas1.configure(yscrollcommand=my_scrollbar1.set, bg="gray")
+    my_canvas1.bind('<Configure>', lambda e: my_canvas1.configure(scrollregion=my_canvas1.bbox("all")))
+
+    second_frame1 = Frame(my_canvas1, width=1000, height=100, bg="gray")
+
+    Button(second_frame1, text="Upload", command= partial(upload, key), width="15", height="2").grid(row=0, column=0, padx=10, pady=8)
 
     a = 1
     i = 0
@@ -195,24 +232,25 @@ def folder_menu(key):
 
     while i < len(files):
         if f == True:
-            Button(root4, text=files[i], command= partial(menu, files[i]), width="35", height="2").grid(row=a, column=0, padx=10, pady=8)
+            Button(second_frame1, text=files[i], command= partial(menu, files[i]), width="35", height="2").grid(row=a, column=0, padx=10, pady=8)
             f = False
             i += 1
         if i < len(files) and f == False:
-            Button(root4, text=files[i], command= partial(menu, files[i]), width="35", height="2").grid(row=a, column=1, padx=10, pady=8)
+            Button(second_frame1, text=files[i], command= partial(menu, files[i]), width="35", height="2").grid(row=a, column=1, padx=10, pady=8)
             f = True
             i += 1
         else:
             break
         a += 1
 
+    my_canvas1.create_window((0, 0), window=second_frame, anchor="nw")
     root4.mainloop()
 
 def exit():
     sys.exit(1)
 
-Button(root, text="Upload", command= partial(upload, "null"), width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
-Button(root, text="Folder Options", command=folder_options, width="15", height="2").grid(row=0, column=1, padx=10, pady=8)
+Button(second_frame, text="Upload", command= partial(upload, "null"), width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
+Button(second_frame, text="Folder Options", command=folder_options, width="15", height="2").grid(row=0, column=1, padx=10, pady=8)
 
 root.wm_protocol("WM_DELETE_WINDOW", exit)
 
@@ -227,12 +265,12 @@ f = True
 
 while i < len(folder):
     if f == True:
-        Button(root, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
+        Button(second_frame, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
         f=False
         i+=1
 
     if i < len(folder) and f == False:
-        Button(root, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
+        Button(second_frame, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
         f=True
         i+=1
 
@@ -243,15 +281,16 @@ while i < len(folder):
 i=0
 while i < len(file):
     if f == True:
-        Button(root, text=file[i], command= partial(menu, file[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
+        Button(second_frame, text=file[i], command= partial(menu, file[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
         f=False
         i+=1
     if i < len(file) and f == False:
-        Button(root, text=file[i], command= partial(menu, file[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
+        Button(second_frame, text=file[i], command= partial(menu, file[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
         f=True
         i+=1
     else:
         break
     a+=1
 
+my_canvas.create_window((0, 0), window=second_frame, anchor="nw")
 root.mainloop()
