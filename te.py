@@ -6,16 +6,20 @@ import sys
 
 cwd = os.getcwd()
 
-a={}
+root3 = Tk()
+root3.geometry("450x200")
+root3.resizable(False, False)
+root3.title("Discord Cloud Storage (Made By: The Low Spec PC)")
+root3.iconbitmap(cwd + "/icon.ico")
+root3.config(bg="gray")
 
-for i in range(10):
-    a["Somthing"+str(i)]=[]
-for j in range(10):
-    for k in range(j):
-        a["Somthing"+str(j)].append(k)
-#print(len(a))
-#print(a[list(a.keys())[8]])
+Label(root3, text="Enter Folder Name", font=("Raleway", 15)).place(x=140, y=10)
+Entry(root3, width="25").place(x=150, y=70)
 
-con1 = "28 null test.png"
-flag1 = con1.split(" ", 2)
-print(flag1[2])
+#Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
+#Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
+
+Button(root3, text="Create", width="15", height="2").grid(row=0, column=0, padx=70, pady=150)
+Button(root3, text="Delete", width="15", height="2").grid(row=0, column=1, padx=10, pady=150)
+
+root3.mainloop()

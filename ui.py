@@ -2,6 +2,7 @@ import FileConverter
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+from functools import partial
 import sys
 import threading
 import nextcord, os
@@ -39,6 +40,9 @@ async def on_ready():
     await bot.close()
 bot.run(token)
 
+print(file)
+print(folder)
+
 root = Tk()
 root.geometry("550x600")
 root.resizable(False,False)
@@ -46,7 +50,7 @@ root.title("Discord Cloud Storage (Made By: The Low Spec PC)")
 root.iconbitmap(cwd+"/icon.ico")
 root.config(bg="gray")
 
-def menu():
+def menu(files):
     root1 = Tk()
     root1.geometry("450x200")
     root1.resizable(False, False)
@@ -66,6 +70,9 @@ def menu():
         value_label = ttk.Label(root1, text=f"Wait till the process is done")
         value_label.place(x=145, y=120)
 
+        call(["python", f"dbot.py", "download", files])
+        FileConverter.join(files)
+
         value_label['text'] = "File successfully downloaded"
         pb.stop()
 
@@ -81,19 +88,25 @@ def menu():
         value_label = ttk.Label(root1, text=f"Wait till the process is done")
         value_label.place(x=145, y=120)
 
+        call(["python", f"dbot.py", "delete", files])
+
         value_label['text'] = "File successfully deleted"
         pb.stop()
 
-    Button(root1, text="Download", command=download, width="15", height="2").grid(row=0, column=0, padx=70, pady=15)
-    Button(root1, text="Delete", command=delete, width="15", height="2").grid(row=0, column=1, padx=10, pady=15)
+    Button(root1, text="Download", command=threading.Thread(target=download).start, width="15", height="2").grid(row=0, column=0, padx=70, pady=15)
+    Button(root1, text="Delete", command=threading.Thread(target=delete).start, width="15", height="2").grid(row=0, column=1, padx=10, pady=15)
 
-def upload():
+    root1.mainloop()
+
+def upload(key):
     root2 = Tk()
     root2.geometry("450x200")
     root2.resizable(False,False)
     root2.title("Discord Cloud Storage (Made By: The Low Spec PC)")
     root2.iconbitmap(cwd + "/icon.ico")
     root2.config(bg="gray")
+
+    dir = filedialog.askopenfilename(initialdir="C:/", title="Select a Video")
 
     pb = ttk.Progressbar(
         root2,
@@ -106,8 +119,13 @@ def upload():
     value_label = ttk.Label(root2, text=f"Wait till the process is done")
     value_label.place(x=160, y=120)
 
-    value_label['text'] = "File successfully deleted"
+    FileConverter.split(dir)
+    call(["python", f"dbot.py", "send", dir, key])
+
+    value_label['text'] = "File successfully uploaded"
     pb.stop()
+
+    root2.mainloop()
 
 def folder_options():
     root3 = Tk()
@@ -120,10 +138,15 @@ def folder_options():
     Label(root3, text="Enter Folder Name", font=("Raleway", 15)).place(x=140, y=10)
     Entry(root3, width="25").place(x=150, y=70)
 
-    Button(root3, text="Create", width="15", height="2").grid(row=0, column=0, padx=70, pady=120)
-    Button(root3, text="Delete", width="15", height="2").grid(row=0, column=1, padx=10, pady=120)
+    # Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
+    # Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
 
-def folder_menu(files):
+    Button(root3, text="Create", width="15", height="2").grid(row=0, column=0, padx=70, pady=150)
+    Button(root3, text="Delete", width="15", height="2").grid(row=0, column=1, padx=10, pady=150)
+
+    root3.mainloop()
+
+def folder_menu(key):
     root4 = Tk()
     root4.geometry("550x600")
     root4.resizable(False, False)
@@ -131,28 +154,32 @@ def folder_menu(files):
     root4.iconbitmap(cwd + "/icon.ico")
     root4.config(bg="gray")
 
-    Button(root4, text="Upload", command=upload, width="15", height="2").grid(row=0, column=0, padx=10, pady=8)
+    Button(root4, text="Upload", command=threading.Thread(target=upload, args=key).start, width="15", height="2").grid(row=0, column=0, padx=10, pady=8)
 
     a = 1
     i = 0
     f = True
+    files = folder[key]
+
     while i < len(files):
         if f == True:
-            Button(root, text=files[i], command=menu, width="35", height="2").grid(row=a, column=0, padx=10, pady=8)
+            Button(root4, text=files[i], command= partial(menu, files[i]), width="35", height="2").grid(row=a, column=0, padx=10, pady=8)
             f = False
             i += 1
         if i < len(files) and f == False:
-            Button(root, text=files[i], command=menu, width="35", height="2").grid(row=a, column=1, padx=10, pady=8)
+            Button(root4, text=files[i], command= partial(menu, files[i]), width="35", height="2").grid(row=a, column=1, padx=10, pady=8)
             f = True
             i += 1
         else:
             break
         a += 1
 
+    root4.mainloop()
+
 def exit():
     sys.exit(1)
 
-Button(root, text="Upload", command=upload, width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
+Button(root, text="Upload", command=threading.Thread(target=upload, args="null").start, width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
 Button(root, text="Folder Options", command=folder_options, width="15", height="2").grid(row=0, column=1, padx=10, pady=8)
 
 root.wm_protocol("WM_DELETE_WINDOW", exit)
@@ -168,12 +195,12 @@ f = True
 
 while i < len(folder):
     if f == True:
-        Button(root, text=list(folder.keys())[i], command=lambda: folder_menu(folder[list(folder.keys())[i]]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
+        Button(root, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
         f=False
         i+=1
 
     if i < len(folder) and f == False:
-        Button(root, text=list(folder.keys())[i], command=lambda: folder_menu(folder[list(folder.keys())[i]]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
+        Button(root, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
         f=True
         i+=1
 
@@ -184,11 +211,11 @@ while i < len(folder):
 i=0
 while i < len(file):
     if f == True:
-        Button(root, text=file[i], command=menu, width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
+        Button(root, text=file[i], command= partial(menu, file[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
         f=False
         i+=1
     if i < len(file) and f == False:
-        Button(root, text=file[i], command=menu, width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
+        Button(root, text=file[i], command= partial(menu, file[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
         f=True
         i+=1
     else:
