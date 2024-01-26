@@ -9,7 +9,6 @@ intents = nextcord.Intents.all()
 bot = commands.Bot(command_prefix='!',intents=intents)
 cwd = os.getcwd()
 
-
 def send(dir, folder):
     @bot.event
     async def on_ready():
@@ -50,11 +49,9 @@ def send(dir, folder):
 
             elif check[2] == flag:
                 flag = '(1)' + flag
+                break
 
-        if folder == "null":
-            await channel_flag.send(content=str(len(file)) + ' null ' + flag)
-        else:
-            await channel_flag.send(content=str(len(file)) + ' ' + folder + ' ' + flag)
+        await channel_flag.send(content=str(len(file)) + ' ' + folder + ' ' + flag)
 
         for i in range(len(file)):
             await channel.send(file=nextcord.File(file[i]), content= flag+str(i+1))
@@ -221,6 +218,7 @@ def credel_folder(folder, check):
                 content = message.content
                 if content == folder:
                     await message.delete()
+                    break
 
         await bot.close()
     bot.run(token)

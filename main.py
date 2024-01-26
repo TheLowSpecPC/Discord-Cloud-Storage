@@ -74,7 +74,7 @@ def menu(files):
     root1 = Tk()
     root1.geometry("450x200")
     root1.resizable(False, False)
-    root1.title("Menu")
+    root1.title(files)
     root1.iconbitmap(cwd + "/icon.ico")
     root1.config(bg="gray")
 
@@ -151,7 +151,7 @@ def upload(key):
 
     root2.mainloop()
 
-def folder_options():
+def folder_options(folders):
     root3 = Tk()
     root3.geometry("450x200")
     root3.resizable(False, False)
@@ -163,6 +163,10 @@ def folder_options():
     fol = Entry(root3, width="25")
     fol.place(x=150, y=50)
 
+    name = []
+    for i in range(len(folders)):
+        name.append(list(folders.keys())[i])
+
     def callback(input):
         if "." not in input and " " not in input and input != "null":
             return True
@@ -170,49 +174,63 @@ def folder_options():
             return False
 
     def cre():
-        if callback(fol.get()) == True:
-            pb = ttk.Progressbar(
-                root3,
-                orient='horizontal',
-                mode='indeterminate',
-                length=280
-            )
-            pb.place(x=85, y=80)
-            pb.start()
+        if callback(fol.get()) == True and fol.get() != "":
+            if fol.get() not in name:
+                pb = ttk.Progressbar(
+                    root3,
+                    orient='horizontal',
+                    mode='indeterminate',
+                    length=280
+                )
+                pb.place(x=85, y=80)
+                pb.start()
 
-            call(["python", f"dbot.py", "folder", fol.get(), "cre"])
+                call(["python", f"dbot.py", "folder", fol.get(), "cre"])
 
-            pb.stop()
-            Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
+                pb.stop()
+                Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
 
-        elif callback(fol.get()) == False:
-            Label(root3, text="Invalid Character", font=("Raleway", 10)).place(x=180, y=110)
+            else:
+                Label(root3, text="Folder already exist", font=("Raleway", 10)).place(x=165, y=110)
+
+        elif callback(fol.get()) == False or fol.get() == "":
+            Label(root3, text="Invalid Character", font=("Raleway", 10)).place(x=175, y=110)
 
     def dele():
-        if callback(fol.get()) == True:
-            pb = ttk.Progressbar(
-                root3,
-                orient='horizontal',
-                mode='indeterminate',
-                length=280
-            )
-            pb.place(x=85, y=80)
-            pb.start()
+        if callback(fol.get()) == True and fol.get() != "":
+            if fol.get() in name:
+                pb = ttk.Progressbar(
+                    root3,
+                    orient='horizontal',
+                    mode='indeterminate',
+                    length=280
+                )
+                pb.place(x=85, y=80)
+                pb.start()
 
-            call(["python", f"dbot.py", "folder", fol.get(), "del"])
+                call(["python", f"dbot.py", "folder", fol.get(), "del"])
 
-            pb.stop()
-            Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
+                pb.stop()
+                Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
 
-        elif callback(fol.get()) == False:
-            Label(root3, text="Invalid Character", font=("Raleway", 10)).place(x=180, y=110)
+            else:
+                Label(root3, text="Folder does not exist", font=("Raleway", 10)).place(x=164, y=110)
 
-    Button(root3, text="Create", command=threading.Thread(target=cre).start, width="15", height="2").grid(row=0 ,column=0, padx=70, pady=150)
-    Button(root3, text="Delete", command=threading.Thread(target=dele).start, width="15", height="2").grid(row=0 ,column=1, padx=10, pady=150)
+        elif callback(fol.get()) == False or fol.get() == "":
+            Label(root3, text="Invalid Character", font=("Raleway", 10)).place(x=175, y=110)
+
+    Button(root3, text="Create", command=threading.Thread(target=cre).start, width="15", height="2").grid(row=0,
+                                                                                                          column=0,
+                                                                                                          padx=70,
+                                                                                                          pady=150)
+    Button(root3, text="Delete", command=threading.Thread(target=dele).start, width="15", height="2").grid(row=0,
+                                                                                                           column=1,
+                                                                                                           padx=10,
+                                                                                                           pady=150)
 
     root3.mainloop()
 
-def folder_menu(key):
+def folder_menu(files, key):
     root4 = Tk()
     root4.geometry("560x600")
     root4.resizable(False, False)
@@ -243,7 +261,6 @@ def folder_menu(key):
     a = 1
     i = 0
     f = True
-    files = folder[key]
 
     while i < len(files):
         if f == True:
@@ -264,15 +281,10 @@ def folder_menu(key):
 def exit():
     sys.exit(1)
 
-Button(second_frame, text="Upload", command= partial(upload, "null"), width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
-Button(second_frame, text="Folder Options", command=folder_options, width="15", height="2").grid(row=0, column=1, padx=10, pady=8)
-
 root.wm_protocol("WM_DELETE_WINDOW", exit)
 
-"""for i in range(5):
-    folder.append("folder "+str(i+1))
-for i in range(9):
-    file.append("file "+str(i+1))"""
+Button(second_frame, text="Upload", command= partial(upload, "null"), width="15", height="2").grid(row = 0, column = 0, padx = 10, pady = 8)
+Button(second_frame, text="Folder Options", command= partial(folder_options, folder), width="15", height="2").grid(row=0, column=1, padx=10, pady=8)
 
 a=1
 i=0
@@ -280,12 +292,12 @@ f = True
 
 while i < len(folder):
     if f == True:
-        Button(second_frame, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
+        Button(second_frame, text=list(folder.keys())[i], command=partial(folder_menu, folder[list(folder.keys())[i]], list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 0, padx = 10, pady = 8)
         f=False
         i+=1
 
     if i < len(folder) and f == False:
-        Button(second_frame, text=list(folder.keys())[i], command= partial(folder_menu, list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
+        Button(second_frame, text=list(folder.keys())[i], command=partial(folder_menu, folder[list(folder.keys())[i]], list(folder.keys())[i]), width="35", height="2").grid(row = a, column = 1, padx = 10, pady = 8)
         f=True
         i+=1
 
