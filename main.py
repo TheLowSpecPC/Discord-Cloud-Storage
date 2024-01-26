@@ -1,15 +1,16 @@
+from secrets import Your_Token
 import FileConverter
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from functools import partial
-import sys
-import threading
-import nextcord, os
-from nextcord.ext import commands
 from subprocess import call
-from secrets import Your_Token
+import nextcord
+from nextcord.ext import commands
+import threading
+import sys
+import os
 
 cwd = os.getcwd()
 
@@ -162,35 +163,49 @@ def folder_options():
     fol = Entry(root3, width="25")
     fol.place(x=150, y=50)
 
+    def callback(input):
+        if "." not in input and " " not in input and input != "null":
+            return True
+        else:
+            return False
+
     def cre():
-        pb = ttk.Progressbar(
-            root3,
-            orient='horizontal',
-            mode='indeterminate',
-            length=280
-        )
-        pb.place(x=85, y=80)
-        pb.start()
+        if callback(fol.get()) == True:
+            pb = ttk.Progressbar(
+                root3,
+                orient='horizontal',
+                mode='indeterminate',
+                length=280
+            )
+            pb.place(x=85, y=80)
+            pb.start()
 
-        call(["python", f"dbot.py", "folder", fol.get(), "cre"])
+            call(["python", f"dbot.py", "folder", fol.get(), "cre"])
 
-        pb.stop()
-        Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
+            pb.stop()
+            Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
+
+        elif callback(fol.get()) == False:
+            Label(root3, text="Invalid Character", font=("Raleway", 10)).place(x=180, y=110)
 
     def dele():
-        pb = ttk.Progressbar(
-            root3,
-            orient='horizontal',
-            mode='indeterminate',
-            length=280
-        )
-        pb.place(x=85, y=80)
-        pb.start()
+        if callback(fol.get()) == True:
+            pb = ttk.Progressbar(
+                root3,
+                orient='horizontal',
+                mode='indeterminate',
+                length=280
+            )
+            pb.place(x=85, y=80)
+            pb.start()
 
-        call(["python", f"dbot.py", "folder", fol.get(), "del"])
+            call(["python", f"dbot.py", "folder", fol.get(), "del"])
 
-        pb.stop()
-        Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
+            pb.stop()
+            Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
+
+        elif callback(fol.get()) == False:
+            Label(root3, text="Invalid Character", font=("Raleway", 10)).place(x=180, y=110)
 
     Button(root3, text="Create", command=threading.Thread(target=cre).start, width="15", height="2").grid(row=0 ,column=0, padx=70, pady=150)
     Button(root3, text="Delete", command=threading.Thread(target=dele).start, width="15", height="2").grid(row=0 ,column=1, padx=10, pady=150)
