@@ -2,7 +2,6 @@ from secrets import Your_Token
 import FileConverter
 import tkinter as tk
 from tkinter import *
-from tkinter import ttk
 from tkinter import filedialog
 from functools import partial
 from subprocess import call
