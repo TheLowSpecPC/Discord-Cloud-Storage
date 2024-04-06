@@ -71,6 +71,15 @@ my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion=my_canv
 second_frame = Frame(my_canvas, width = 1000, height = 100, bg="gray")
 
 def menu(files):
+    def download():
+        root1.destroy()
+        call(["python", f"dbot.py", "download", files])
+        FileConverter.join(files)
+
+    def delete():
+        root1.destroy()
+        call(["python", f"dbot.py", "delete", files])
+
     root1 = Tk()
     root1.geometry("450x200")
     root1.resizable(False, False)
@@ -78,80 +87,29 @@ def menu(files):
     root1.iconbitmap(cwd + "/icon.ico")
     root1.config(bg="gray")
 
-    def download():
-        pb = ttk.Progressbar(
-            root1,
-            orient='horizontal',
-            mode='indeterminate',
-            length=280
-        )
-        pb.place(x=85, y=80)
-        pb.start()
-        value_label = ttk.Label(root1, text=f"Wait till the process is done")
-        value_label.place(x=145, y=120)
-
-        call(["python", f"dbot.py", "download", files])
-        FileConverter.join(files)
-
-        value_label['text'] = "File successfully downloaded"
-        pb.stop()
-
-    def delete():
-        pb = ttk.Progressbar(
-            root1,
-            orient='horizontal',
-            mode='indeterminate',
-            length=280
-        )
-        pb.place(x=85, y=80)
-        pb.start()
-        value_label = ttk.Label(root1, text=f"Wait till the process is done")
-        value_label.place(x=145, y=120)
-
-        call(["python", f"dbot.py", "delete", files])
-
-        value_label['text'] = "File successfully deleted"
-        pb.stop()
-
-    Button(root1, text="Download", command=threading.Thread(target=download).start, width="15", height="2").grid(row=0, column=0, padx=70, pady=15)
-    Button(root1, text="Delete", command=threading.Thread(target=delete).start, width="15", height="2").grid(row=0, column=1, padx=10, pady=15)
+    Button(root1, text="Download", command=threading.Thread(target=download).start, width="15", height="2").grid(row=0, column=0, padx=70, pady=70)
+    Button(root1, text="Delete", command=threading.Thread(target=delete).start, width="15", height="2").grid(row=0, column=1, padx=10, pady=70)
 
     root1.mainloop()
 
 def upload(key):
-    root2 = Tk()
-    root2.geometry("450x200")
-    root2.resizable(False,False)
-    root2.title("Upload")
-    root2.iconbitmap(cwd + "/icon.ico")
-    root2.config(bg="gray")
-
     dir = filedialog.askopenfilename(initialdir="C:/", title="Select a Video")
-
-    pb = ttk.Progressbar(
-        root2,
-        orient='horizontal',
-        mode='indeterminate',
-        length=280
-    )
-    pb.place(x=85, y=70)
-    pb.start()
-    value_label = ttk.Label(root2, text=f"Wait till the process is done")
-    value_label.place(x=160, y=120)
 
     def thread():
         FileConverter.split(dir)
         call(["python", f"dbot.py", "send", dir, key])
 
-        value_label['text'] = "File successfully uploaded"
-        pb.stop()
-
     th = threading.Thread(target=thread)
     th.start()
 
-    root2.mainloop()
-
 def folder_options(folders):
+    def callcre(fold):
+        root3.destroy()
+        call(["python", f"dbot.py", "folder", fold, "cre"])
+    def calldel(fold):
+        root3.destroy()
+        call(["python", f"dbot.py", "folder", fold, "del"])
+
     root3 = Tk()
     root3.geometry("450x200")
     root3.resizable(False, False)
@@ -176,19 +134,7 @@ def folder_options(folders):
     def cre():
         if callback(fol.get()) == True and fol.get() != "":
             if fol.get() not in name:
-                pb = ttk.Progressbar(
-                    root3,
-                    orient='horizontal',
-                    mode='indeterminate',
-                    length=280
-                )
-                pb.place(x=85, y=80)
-                pb.start()
-
-                call(["python", f"dbot.py", "folder", fol.get(), "cre"])
-
-                pb.stop()
-                Label(root3, text="Folder Created", font=("Raleway", 10)).place(x=180, y=110)
+                callcre(fol.get())
 
             else:
                 Label(root3, text="Folder already exist", font=("Raleway", 10)).place(x=165, y=110)
@@ -199,19 +145,7 @@ def folder_options(folders):
     def dele():
         if callback(fol.get()) == True and fol.get() != "":
             if fol.get() in name:
-                pb = ttk.Progressbar(
-                    root3,
-                    orient='horizontal',
-                    mode='indeterminate',
-                    length=280
-                )
-                pb.place(x=85, y=80)
-                pb.start()
-
-                call(["python", f"dbot.py", "folder", fol.get(), "del"])
-
-                pb.stop()
-                Label(root3, text="Folder Deleted", font=("Raleway", 10)).place(x=180, y=110)
+                calldel(fol.get())
 
             else:
                 Label(root3, text="Folder does not exist", font=("Raleway", 10)).place(x=164, y=110)
