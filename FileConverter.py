@@ -10,9 +10,9 @@ down = str(Path.home() / "Downloads")
 def split(dir):
     file_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
     file = file_tmp.split("/")[len(file_tmp.split("/")) - 1]
-    folder = os.listdir(cwd + f"\\out\\{file}\\")
 
     if os.path.exists(cwd + f"\\out\\{file}\\"):
+        folder = os.listdir(cwd + f"\\out\\{file}\\")
         for i in range(len(folder)):
             folder[i] = cwd + f"\\out\\{file}\\" + folder[i]
         for i in range(len(folder)):

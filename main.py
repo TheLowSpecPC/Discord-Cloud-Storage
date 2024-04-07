@@ -40,6 +40,19 @@ async def on_ready():
     await bot.close()
 bot.run(token)
 
+try:
+    left_over = os.listdir(cwd + "\\out\\")
+    if len(left_over) > 0:
+        for i in left_over:
+            fold = os.listdir(cwd + f"\\out\\{i}\\")
+            if len(fold) > 0:
+                for j in fold:
+                    os.remove(cwd + f"\\out\\{i}\\" + j)
+            os.rmdir(cwd + f"\\out\\{i}\\")
+except:
+    print(EXCEPTION)
+
+
 print(file)
 print(folder)
 
@@ -72,10 +85,10 @@ def menu(files):
     def download():
         root1.destroy()
         if os.path.exists(cwd + f"\\out\\{files}\\"):
-            fr = os.listdir(cwd + f"\\out\\{file}\\")
+            fr = os.listdir(cwd + f"\\out\\{files}\\")
 
             for i in range(len(fr)):
-                fr[i] = cwd + f"\\out\\{file}\\" + fr[i]
+                fr[i] = cwd + f"\\out\\{files}\\" + fr[i]
             for i in range(len(fr)):
                 if os.path.exists(fr[i]):
                     os.remove(fr[i])
