@@ -72,7 +72,13 @@ def menu(files):
     def download():
         root1.destroy()
         if os.path.exists(cwd + f"\\out\\{files}\\"):
-            pass
+            fr = os.listdir(cwd + f"\\out\\{file}\\")
+
+            for i in range(len(fr)):
+                fr[i] = cwd + f"\\out\\{file}\\" + fr[i]
+            for i in range(len(fr)):
+                if os.path.exists(fr[i]):
+                    os.remove(fr[i])
         else:
             os.mkdir(cwd + f"\\out\\{files}\\")
 
