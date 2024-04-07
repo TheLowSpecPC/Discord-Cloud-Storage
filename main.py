@@ -1,5 +1,4 @@
 from secrets import Your_Token
-import FileConverter
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
@@ -72,8 +71,12 @@ second_frame = Frame(my_canvas, width = 1000, height = 100, bg="gray")
 def menu(files):
     def download():
         root1.destroy()
+        if os.path.exists(cwd + f"\\out\\{files}\\"):
+            pass
+        else:
+            os.mkdir(cwd + f"\\out\\{files}\\")
+
         call(["python", f"dbot.py", "download", files])
-        FileConverter.join(files)
 
     def delete():
         root1.destroy()
@@ -95,7 +98,6 @@ def upload(key):
     dir = filedialog.askopenfilename(initialdir="C:/", title="Select a Video")
 
     def thread():
-        FileConverter.split(dir)
         call(["python", f"dbot.py", "send", dir, key])
 
     th = threading.Thread(target=thread)

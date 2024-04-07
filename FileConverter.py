@@ -8,18 +8,16 @@ cwd = os.getcwd()
 down = str(Path.home() / "Downloads")
 
 def split(dir):
-    folder = os.listdir(cwd + "\\out")
     file_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
     file = file_tmp.split("/")[len(file_tmp.split("/")) - 1]
 
-    for i in range(len(folder)):
-        folder[i] = cwd + "\\out\\" + folder[i]
-    for i in range(len(folder)):
-        if os.path.exists(folder[i]):
-            os.remove(folder[i])
+    if os.path.exists(cwd + f"\\out\\{file}\\"):
+        pass
+    else:
+        os.mkdir(cwd + f"\\out\\{file}\\")
 
     shutil.copyfile(dir,
-                    cwd+"\\out\\"+file)
+                    cwd + f"\\out\\{file}\\" + file)
 
     fsplitter = file_processing.FileProcessor()
 
@@ -27,8 +25,8 @@ def split(dir):
     p_size = 20
 
     #File to split and subdir where to save chunks
-    from_file = cwd+"\\out\\"+file
-    to_dir = cwd+"\\out"
+    from_file = cwd + f"\\out\\{file}\\" + file
+    to_dir = cwd + f"\\out\\{file}\\"
 
     if not os.path.exists(to_dir):
         try:
@@ -44,28 +42,20 @@ def split(dir):
     #Split now
     fsplitter.split_file_by_size(from_file, p_size, to_dir)
 
-    if os.path.exists(cwd+"\\out\\"+file):
-        os.remove(cwd+"\\out\\"+file)
+    if os.path.exists(cwd + f"\\out\\{file}\\" + file):
+        os.remove(cwd + f"\\out\\{file}\\" + file)
 
-def join(dir):
+def join(file):
     fjoiner = file_processing.FileProcessor()
-    file_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
-    file = file_tmp.split("/")[len(file_tmp.split("/")) - 1]
-    folder = os.listdir(cwd + "\\out")
 
     #Set the size-value for reading chunks, for example: 25 mb
     readsize = 20
 
     #Set chunks dir and dest filename
-    from_dir = cwd+"\\out"
-    to_file = down+"\\"+file
+    from_dir = cwd + f"\\out\\{file}\\"
+    to_file = down + "\\" + file
 
     absfrom, absto = map(os.path.abspath, [from_dir, to_file])
     print('Joining', absfrom, 'to', absto, 'by', readsize)
     #Join now
     fjoiner.join_file(from_dir, readsize, to_file)
-    for i in range(len(folder)):
-        folder[i] = cwd + "\\out\\" + folder[i]
-    for i in range(len(folder)):
-        if os.path.exists(folder[i]):
-            os.remove(folder[i])

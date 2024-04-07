@@ -1,3 +1,4 @@
+import FileConverter
 import nextcord, os, shutil
 from nextcord.ext import commands
 import sys, re
@@ -35,16 +36,18 @@ def send(dir, folder):
         return f"Current Progress: {pb['value']:.2f}%"
 
     def thread():
+        FileConverter.split(dir)
+
         @bot.event
         async def on_ready():
             flag_tmp = dir.split("\\")[len(dir.split("\\")) - 1]
             flag = flag_tmp.split("/")[len(flag_tmp.split("/")) - 1]
-            file = os.listdir(cwd + "\\out")
+            file = os.listdir(cwd + f"\\out\\{flag}\\")
             channel = bot.get_channel(1116747276275155024)
             channel_flag = bot.get_channel(1180390532703326210)
 
             for i in range(len(file)):
-                file[i] = cwd + "\\out\\" + file[i]
+                file[i] = cwd + f"\\out\\{flag}\\" + file[i]
 
             print(f'{bot.user} has connected to Discord!')
 
@@ -88,9 +91,12 @@ def send(dir, folder):
                 if os.path.exists(file[i]):
                     os.remove(file[i])
 
-                pb['value'] += 95/len(file)
+                pb['value'] += 90/len(file)
                 value_label['text'] = update_progress_label()
                 if i+1 == len(file):
+                    if os.path.exists(cwd + f"\\out\\{flag}\\"):
+                        os.rmdir(cwd + f"\\out\\{flag}\\")
+
                     pb['value'] = 100
                     value_label['text'] = update_progress_label()
 
@@ -130,14 +136,8 @@ def down(file):
             print(f'{bot.user} has connected to Discord!')
             channel = bot.get_channel(1116747276275155024)
             channel_flag = bot.get_channel(1180390532703326210)
-            folder = os.listdir(cwd + "\\out")
             contents = []
             names = []
-            for i in range(len(folder)):
-                folder[i] = cwd + "\\out\\" + folder[i]
-            for i in range(len(folder)):
-                if os.path.exists(folder[i]):
-                    os.remove(folder[i])
 
             async for message in channel_flag.history(limit=None):
                 con = message.content
@@ -152,7 +152,7 @@ def down(file):
             pb['value'] = 5
             value_label['text'] = update_progress_label()
 
-            a=0
+            a=1
             async for message in channel.history(limit=None):
                 content = message.content
                 contents.append(content)
@@ -163,11 +163,23 @@ def down(file):
                             print(attachment.filename)
                             await attachment.save(attachment.filename)
                             shutil.move(cwd+"\\"+attachment.filename,
-                                            cwd +"\\out\\"+attachment.filename)
+                                            cwd + f"\\out\\{file}\\" + attachment.filename)
 
-                            pb['value'] += 95 / len(names)
+                            pb['value'] += 90 / len(names)
                             value_label['text'] = update_progress_label()
                             if a == len(names):
+                                FileConverter.join(file)
+                                print("done")
+
+                                folder = os.listdir(cwd + f"\\out\\{file}\\")
+                                for i in range(len(folder)):
+                                    folder[i] = cwd + f"\\out\\{file}\\" + folder[i]
+                                for i in range(len(folder)):
+                                    if os.path.exists(folder[i]):
+                                        os.remove(folder[i])
+                                if os.path.exists(cwd + f"\\out\\{file}\\"):
+                                    os.rmdir(cwd + f"\\out\\{file}\\")
+
                                 pb['value'] = 100
                                 value_label['text'] = update_progress_label()
                             a+=1
@@ -210,14 +222,8 @@ def dele(file):
             print(f'{bot.user} has connected to Discord!')
             channel = bot.get_channel(1116747276275155024)
             channel_flag = bot.get_channel(1180390532703326210)
-            folder = os.listdir(cwd + "\\out")
             contents = []
             names = []
-            for i in range(len(folder)):
-                folder[i] = cwd + "\\out\\" + folder[i]
-            for i in range(len(folder)):
-                if os.path.exists(folder[i]):
-                    os.remove(folder[i])
 
             async for message in channel_flag.history(limit=None):
                 con = message.content
